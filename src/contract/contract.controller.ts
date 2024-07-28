@@ -13,8 +13,13 @@ export class ContractController {
     return await this.contractService.registContract(registContract);
   }
 
-  @Get()
+  @Get('/headlessTest')
   async headlessTest(): Promise<string> {
     return await this.contractService.headlessTest();
+  }
+
+  @Get('/s3ConnectTest')
+  async s3ConnectTest(): Promise<string> {
+    return await this.contractService.s3ConnectTest();
   }
 }

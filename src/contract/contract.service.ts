@@ -5,28 +5,43 @@ import {
   SignPoint,
 } from './dto/regist.contract.req.dto';
 import _ from 'lodash';
-import { S3 } from '@aws-sdk/client-s3';
+import { S3, S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import Jimp from 'jimp';
 import puppeteer from 'puppeteer-core';
 import { AppModule } from '../app.module';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ContractService {
+  constructor(private configService: ConfigService) {}
+  private s3Client = new S3Client({
+    region: this.configService.get<string>('AWS_REGION'),
+    credentials: {
+      accessKeyId: this.configService.get<string>('S3_ACCESS_KEY'),
+      secretAccessKey: this.configService.get<string>('S3_SECRET_ACCESS_KEY'),
+    },
+  });
+  private stream = (stream, type: any) =>
+    new Promise((resolve, reject) => {
+      const chunks = [];
+      stream.on('data', (chunk) => chunks.push(chunk));
+      stream.on('error', reject);
+      stream.on('end', () => resolve(type(chunks)));
+    });
   streamToStringInValue = (chunks: any) =>
     Buffer.concat(chunks).toString('utf8');
 
   private getContent = async (bucket, readKey, type: any) => {
-    const stream = (stream) =>
-      new Promise((resolve, reject) => {
-        const chunks = [];
-        stream.on('data', (chunk) => chunks.push(chunk));
-        stream.on('error', reject);
-        stream.on('end', () => resolve(type(chunks)));
-      });
-    return await stream(
+    return await this.stream(
       (
-        await new S3().getObject(this.readS3Params(bucket, readKey))
+        await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: bucket,
+            Key: readKey,
+          }),
+        )
       ).Body,
+      type,
     );
   };
 
@@ -175,6 +190,16 @@ export class ContractService {
         body: JSON.stringify(e),
       };
     }
+    return '성공';
+  };
+
+  public s3ConnectTest = async () => {
+    const obj = await this.getContent(
+      'wellcheck-server-dev2',
+      'contract/html_template/application_for_business_participation.html',
+      this.streamToStringInValue,
+    );
+    console.log(obj);
     return '성공';
   };
 }
