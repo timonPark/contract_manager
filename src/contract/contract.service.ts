@@ -9,14 +9,16 @@ import { S3, S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import Jimp from 'jimp';
 import puppeteer from 'puppeteer-core';
 import { AppModule } from '../app.module';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ContractService {
+  constructor(private configService: ConfigService) {}
   private s3Client = new S3Client({
-    region: 'ap-northeast-2',
+    region: this.configService.get<string>('AWS_REGION'),
     credentials: {
-      accessKeyId: '',
-      secretAccessKey: '',
+      accessKeyId: this.configService.get<string>('S3_ACCESS_KEY'),
+      secretAccessKey: this.configService.get<string>('S3_SECRET_ACCESS_KEY'),
     },
   });
   private stream = (stream, type: any) =>

@@ -40,3 +40,4 @@ lerna-debug.log*
 
 # 환경변수
 .env
+*.yaml
