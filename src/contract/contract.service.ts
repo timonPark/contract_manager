@@ -7,6 +7,8 @@ import {
 import _ from 'lodash';
 import { S3 } from '@aws-sdk/client-s3';
 import Jimp from 'jimp';
+import puppeteer from 'puppeteer-core';
+import { AppModule } from '../app.module';
 
 @Injectable()
 export class ContractService {
@@ -155,5 +157,24 @@ export class ContractService {
       } catch (err) {}
     }
     return null;
+  };
+
+  public headlessTest = async () => {
+    try {
+      const browser = await puppeteer.launch({
+        executablePath: AppModule.CHROMIUM_EXECUTABLE_PATH,
+        headless: true,
+        ignoreHTTPSErrors: true,
+      });
+      await browser.newPage();
+      await browser.close();
+    } catch (e) {
+      console.log(e);
+      const response = {
+        statusCode: 500,
+        body: JSON.stringify(e),
+      };
+    }
+    return '성공';
   };
 }

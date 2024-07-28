@@ -26,7 +26,6 @@ export class Contract {
   private _fileName: string;
   @ArrayNotEmpty()
   private _dataBinding: DataBinding[];
-  @IsNotEmpty()
   private _signPoint: SignPoint;
   @IsNotEmpty()
   private _readKey: string;
