@@ -4,23 +4,24 @@ import {
   RegistContractReqDto,
   SignPoint,
 } from './dto/regist.contract.req.dto';
-import _ from 'lodash';
 import { S3, S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import Jimp from 'jimp';
-import puppeteer from 'puppeteer-core';
+import puppeteer, { Browser, Page } from 'puppeteer-core';
 import { AppModule } from '../app.module';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ContractService {
   constructor(private configService: ConfigService) {}
-  private s3Client = new S3Client({
+  private s3Config = {
     region: this.configService.get<string>('AWS_REGION'),
     credentials: {
       accessKeyId: this.configService.get<string>('S3_ACCESS_KEY'),
       secretAccessKey: this.configService.get<string>('S3_SECRET_ACCESS_KEY'),
     },
-  });
+  };
+  private s3Client = new S3Client(this.s3Config);
+  private s3 = new S3(this.s3Config);
   private stream = (stream, type: any) =>
     new Promise((resolve, reject) => {
       const chunks = [];
@@ -60,17 +61,13 @@ export class ContractService {
   });
 
   private editHtml = (htmlContent, contractListMap, fileName) => {
-    return _.reduce(
-      contractListMap.get(fileName),
-      (content, targetKeyValue) => {
-        return this.replaceAll(
-          content,
-          '&' + targetKeyValue.targetPoint,
-          targetKeyValue.targetValue,
-        );
-      },
-      htmlContent,
-    );
+    return contractListMap.get(fileName).reduce((content, targetKeyValue) => {
+      return this.replaceAll(
+        content,
+        '&' + targetKeyValue.targetPoint,
+        targetKeyValue.targetValue,
+      );
+    }, htmlContent);
   };
 
   private setMaps = (
@@ -80,15 +77,14 @@ export class ContractService {
     readKeyMap: Map<string, string>,
     writeKeyMap: Map<string, string>,
   ) => {
-    _.chain(registContract.contract)
-      .forEach((contract) => {
-        const fileName = contract.fileName;
-        contractListMap.set(fileName, contract.dataBinding);
-        contractSignPointMap.set(fileName, contract.signPoint);
-        readKeyMap.set(fileName, contract.readKey);
-        writeKeyMap.set(fileName, contract.writeKey);
-      })
-      .value();
+    console.log(registContract.contracts);
+    for (const contract of registContract.contracts) {
+      const fileName = contract.fileName;
+      contractListMap.set(fileName, contract.dataBinding);
+      contractSignPointMap.set(fileName, contract.signPoint);
+      readKeyMap.set(fileName, contract.readKey);
+      writeKeyMap.set(fileName, contract.writeKey);
+    }
   };
 
   private replaceAll = (input, searchValue, replaceValue) => {
@@ -96,10 +92,30 @@ export class ContractService {
     return input.replace(regex, replaceValue);
   };
 
-  private getBufferAtConvertHtmlToPng = async (htmlContent) => {
-    // return await nodeHtmlToImage({
-    //   html: htmlContent
-    // })
+  private getBufferAtConvertHtmlToPng = async (
+    htmlContent: string,
+  ): Promise<Buffer> => {
+    try {
+      const browser: Browser = await puppeteer.launch({
+        executablePath: AppModule.CHROMIUM_EXECUTABLE_PATH,
+        headless: true,
+        ignoreHTTPSErrors: true,
+      });
+      const page: Page = await browser.newPage();
+      await page.setContent(htmlContent);
+      const A4_WIDTH = 794;
+      const A4_HEIGHT = 1123;
+      await page.setViewport({
+        width: A4_WIDTH,
+        height: A4_HEIGHT,
+        deviceScaleFactor: 1,
+      });
+      const contractBuffer = await page.screenshot({ type: 'png' });
+      await browser.close();
+      return contractBuffer;
+    } catch (e) {
+      console.log(e);
+    }
     return null;
   };
 
@@ -133,7 +149,7 @@ export class ContractService {
       writeKeyMap,
     );
     const bucket: string = registContract.bucket;
-    for (const contract of registContract.contract) {
+    for (const contract of registContract.contracts) {
       const fileName: string = contract.fileName;
       const readKey: string = contract.readKey;
       try {
@@ -157,7 +173,7 @@ export class ContractService {
 
         if (signPoint) {
           // s3 저장
-          await new S3().putObject(
+          await this.s3.putObject(
             this.writeS3Params(
               bucket,
               writeKeyMap.get(fileName),
@@ -169,7 +185,9 @@ export class ContractService {
             ),
           );
         }
-      } catch (err) {}
+      } catch (err) {
+        console.log(err);
+      }
     }
     return null;
   };
