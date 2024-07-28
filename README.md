@@ -56,6 +56,21 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+
+```
+
+## Docker File Build
+```
+docker build -t contract_manager .
+```
+
+## Docker Instance Create
+```
+docker run -d -p 3000:3000 \
+  -e AWS_REGION={aws 지역} \
+  -e S3_ACCESS_KEY={s3 accessKey} \
+  -e S3_SECRET_ACCESS_KEY={s3 secret key} \
+  contract_manager
 ```
 
 ## Support
