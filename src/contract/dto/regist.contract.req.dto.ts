@@ -6,7 +6,7 @@ export class RegistContractReqDto {
   @IsNotEmpty()
   private _signKey: string;
   @ArrayNotEmpty()
-  private _contract: Contract[];
+  private _contracts: Contract[];
 
   get bucket(): string {
     return this._bucket;
@@ -16,8 +16,8 @@ export class RegistContractReqDto {
     return this._signKey;
   }
 
-  get contract(): Contract[] {
-    return this._contract;
+  get contracts(): Contract[] {
+    return this._contracts;
   }
 }
 
