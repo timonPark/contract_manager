@@ -1,0 +1,109 @@
+{
+  "bucket" : "wellcheck-server-dev2",
+  "contracts" : [
+    {
+      "fileName" : "application_for_business_participation.html",
+      "dataBinding" : [
+        {
+          "targetPoint" : "name",
+          "targetValue" : "박종훈"
+        },
+        {
+          "targetPoint" : "rrn",
+          "targetValue" : "880514-1111111"
+        },
+        {
+          "targetPoint" : "phone",
+          "targetValue" : "010-8888-999"
+        },
+        {
+          "targetPoint" : "address",
+          "targetValue" : "서울시 금천구 벚꽃로 100"
+        },
+        {
+          "targetPoint" : "year",
+          "targetValue" : "2024"
+        },
+        {
+          "targetPoint" : "month",
+          "targetValue" : "07"
+        },
+        {
+          "targetPoint" : "day",
+          "targetValue" : "22"
+        },
+        {
+          "targetPoint" : "hospital",
+          "targetValue" : "하나의원"
+        }
+      ],
+      "signPoint" : {
+        "x" : 680,
+        "y" : 820
+      },
+      "readKey" : "contract/html_template/application_for_business_participation.html",
+      "writeKey" : "hospital/5f6d45853ebf6c15ad9a7f71/pcp/contract/application_for_business_participation_5f6d45853ebf6c15ad9a7f71.png"
+    },
+    {
+      "fileName" : "persional_information_consent_form_for_patients_3.html",
+      "dataBinding" : [
+        {
+          "targetPoint" : "year",
+          "targetValue" : "2024"
+        },
+        {
+          "targetPoint" : "month",
+          "targetValue" : "07"
+        },
+        {
+          "targetPoint" : "day",
+          "targetValue" : "22"
+        },
+        {
+          "targetPoint" : "name",
+          "targetValue" : "박종훈"
+        },
+        {
+          "targetPoint" : "hospital",
+          "targetValue" : "하나의원"
+        }
+
+      ],
+      "signPoint" : {
+        "x" : 680,
+        "y" : 660
+      },
+      "readKey" : "contract/html_template/persional_information_consent_form_for_patients_3.html",
+      "writeKey" : "hospital/5f6d45853ebf6c15ad9a7f71/pcp/contract/persional_information_consent_form_for_patients_3_5f6d45853ebf6c15ad9a7f71.png"
+    },
+    {
+      "fileName" : "personal_information_consent_form_for_self_measurement_2.html",
+      "dataBinding" : [
+        {
+          "targetPoint" : "year",
+          "targetValue" : "2024"
+        },
+        {
+          "targetPoint" : "month",
+          "targetValue" : "07"
+        },
+        {
+          "targetPoint" : "day",
+          "targetValue" : "22"
+        },
+        {
+          "targetPoint" : "name",
+          "targetValue" : "박종훈"
+        }
+
+      ],
+      "signPoint" : {
+        "x" : 400,
+        "y" : 980
+      },
+      "readKey" : "contract/html_template/personal_information_consent_form_for_self_measurement_2.html",
+      "writeKey" : "hospital/5f6d45853ebf6c15ad9a7f71/pcp/contract/personal_information_consent_form_for_self_measurement_2_5f6d45853ebf6c15ad9a7f71.png"
+    }
+  ],
+  "signKey" : "hospital/5f6d45853ebf6c15ad9a7f71/pcp/contract/pngegg.png"
+}

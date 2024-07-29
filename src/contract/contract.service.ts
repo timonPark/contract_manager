@@ -97,9 +97,10 @@ export class ContractService {
   ): Promise<Buffer> => {
     try {
       const browser: Browser = await puppeteer.launch({
-        executablePath: AppModule.CHROMIUM_EXECUTABLE_PATH,
+        executablePath: this.configService.get<string>('CHROMIUM_PATH'),
         headless: true,
         ignoreHTTPSErrors: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
       const page: Page = await browser.newPage();
       await page.setContent(htmlContent);
