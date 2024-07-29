@@ -59,6 +59,11 @@ $ npm run test:cov
 
 ```
 
+## puppeteer/browsers download
+```
+$ npx @puppeteer/browsers install chrome@116.0.5793.0
+```
+
 ## Docker File Build
 ```
 docker build -t contract_manager .

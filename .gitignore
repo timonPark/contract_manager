@@ -36,7 +36,7 @@ lerna-debug.log*
 
 
 # headless 모듈
-/chromium
+/chromium_linux
 
 # 환경변수
 .env
